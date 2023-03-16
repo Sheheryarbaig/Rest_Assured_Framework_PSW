@@ -1,0 +1,12 @@
+{
+  "msisdn": "#msisdn",
+  "lang": "en",
+  "buildNumber": "135",
+  "osVersion": "15.4",
+  "osType": "iOS",
+  "deviceId": "1671699174-8FA3A6F5-F3E2-41B7-A26F-6F43B1C4DC83",
+  "fcmToken": "frY2bEU160r4uVy7A58CV3:APA91bF337foC3WKmkTg2Ulb-drr0N1dUdEj9dPF2ZjnLVKpTBrhkf0TF6OJ4DqQIflY_UjyKRWtpvt7-0vUZxj3O3EfKEDYrjP3xbTD6cADdZ48D_R_zfvvxpcVZBVlDZ1zUeHQr4E1",
+  "transactionId": "971547045853-1672148015468",
+  "flowName": "Upgrade",
+  "cacheFlow": false
+}
