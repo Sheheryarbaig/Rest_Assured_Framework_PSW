@@ -1,5 +1,7 @@
 package UtilitiesFactory;
 
+import atu.testrecorder.ATUTestRecorder;
+import atu.testrecorder.exceptions.ATUTestRecorderException;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
@@ -23,6 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -42,6 +48,7 @@ public class UtilFactory {
     public static String reportLocation;
     protected static String deviceName;
     public static ServiceFactory serviceFactoryInstance = ServiceFactory.getInstance();
+    private static ATUTestRecorder recorder;
 
     static {
         try {
@@ -855,6 +862,24 @@ public class UtilFactory {
             i++;
         }
         return XPath;
+    }
+
+    public static ATUTestRecorder recording(String path) throws ATUTestRecorderException, IOException {
+        DateFormat datefromat = new SimpleDateFormat("yy-MM-dd HH-mm-ss");
+        Date date = new Date();
+        path = System.getProperty("user.dir")+path+"\\";
+        Path fileToDeletePath = Paths.get(path).toAbsolutePath();
+        File delFile = fileToDeletePath.toAbsolutePath().toFile();
+        if(delFile.isDirectory()){
+            File[] files = delFile.listFiles();
+
+            for (File f: files) {
+                f.delete();
+            }
+//            delFile.delete();
+        }
+        recorder = new ATUTestRecorder(path,"TestVideo-"+datefromat.format(date),false);
+        return recorder;
     }
 
 
