@@ -1,9 +1,13 @@
 package PageObjectFactory.WebShop;
 
 import EnumFactory.PartnerPortal.DashboardPageEnum;
+import UtilitiesFactory.ServiceFactory;
 import UtilitiesFactory.UtilFactory;
 import com.aventstack.extentreports.Status;
 import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 public class CommonPageFactory extends UtilFactory {
 
@@ -64,6 +68,21 @@ public class CommonPageFactory extends UtilFactory {
         }catch (Exception e){
             failureException = e.toString();
             scenarioDef.log(Status.FAIL,"Failed to Validate "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
+            throw e;
+        }
+    }
+
+    public void hoverOnButton(String Locator,String ScreenName) throws ClassNotFoundException {
+        String locator = UtilFactory.locatorXpath(ScreenName,Locator);
+        try{
+            waitFactory.waitForElementToBeVisible(locator);
+            hover(locator);
+            Locator = Locator.replace("XPATH","");
+            Locator = Locator.replace("_"," ");
+            scenarioDef.log(Status.PASS,Locator + " is visible " + " on "+ScreenName+" Page.");
+        }catch (Exception e){
+            failureException = e.toString();
+            scenarioDef.log(Status.FAIL,Locator + " is not visible " + " on "+ScreenName+" Page.");
             throw e;
         }
     }

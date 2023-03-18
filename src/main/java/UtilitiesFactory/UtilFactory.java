@@ -228,7 +228,7 @@ public class UtilFactory {
         }
     }
 
-    protected void hover(String locatorValue)
+    public void hover(String locatorValue)
     {
         WebElement element = elementFactory.getElement(locatorValue);
         hover(element);

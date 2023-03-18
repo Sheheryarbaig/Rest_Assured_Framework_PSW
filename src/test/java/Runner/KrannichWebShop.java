@@ -4,7 +4,7 @@ import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(
-        features ="src/test/resources/FeatureFiles/WebShop/HomePage.feature",
+        features ="src/test/resources/FeatureFiles/WebShop/ProductListingPage.feature",
         monochrome = true,
 //        tags = "@WEBTest",
         plugin = {"json:target/cucumber.json", "pretty"},

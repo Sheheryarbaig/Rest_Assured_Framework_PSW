@@ -13,3 +13,4 @@ Feature: Homepage
       And User Enters "kws.registered.user.pass" on "kws.user.password" Field on "Web Shop Login" Page
       And User Click on "kws.sign.in" Button on "Web Shop Login" Page
       Then User Validate "kws.user.name" Field Appeared on "Home" Page
+

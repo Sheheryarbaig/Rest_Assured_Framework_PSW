@@ -55,4 +55,12 @@ public class CommonStepsDefs {
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.validateFieldonScreen(expectedValue,locator,screenName);
     }
+
+    @When("User Hovers on {string} Button on {string} Page")
+    public void userHoversOnButtonOnPage(String locator, String screenName) throws Exception {
+        screenName = commonPage.removeSpaces(screenName);
+        String expectedValue = new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(locator);
+        locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
+        commonPage.hoverOnButton(locator,screenName);
+    }
 }
