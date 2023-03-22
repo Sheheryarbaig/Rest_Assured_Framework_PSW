@@ -19,7 +19,7 @@ Feature: CartPage
     Then User Validate "kws.user.name" Field Appeared on "Home" Page
     Then User Click on "kws.cart.icon" Button on "Home" Page
     Then User Validate "kws.cart.heading" Field Appeared on "Cart" Page
-    And User JsClick on "kws.increase.quantity" Button on "Cart" Page
+    And User Clicks on "kws.increase.quantity" Button on "Cart" Page
     Then User Validate "value" of "kws.item.quantity" Appeared on "Cart" Page
     Then User Validate "kws.max.quantity.message" Field Appeared on "Cart" Page
     Then User Click on "kws.item" Button on "Cart" Page

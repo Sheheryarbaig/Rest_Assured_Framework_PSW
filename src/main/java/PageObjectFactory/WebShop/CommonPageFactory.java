@@ -31,13 +31,9 @@ public class CommonPageFactory extends UtilFactory {
             waitFactory.waitForElementToBeClickable(locator);
             enterString(locator,textToEnter);
             if(locator.contains("pass")){
-                Locator = Locator.replace("XPATH","");
-                Locator = Locator.replace("_"," ");
                 scenarioDef.log(Status.PASS,"Entered: "+textToEnter.replaceAll(textToEnter,"****")+" on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
                         MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             }else{
-                Locator = Locator.replace("XPATH","");
-                Locator = Locator.replace("_"," ");
                 scenarioDef.log(Status.PASS,"Entered: "+getLocatorNameforLog(textToEnter)+" on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
                         MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             }
@@ -53,8 +49,6 @@ public class CommonPageFactory extends UtilFactory {
         try{
             waitFactory.waitForElementToBeClickable(locator);
             click(locator);
-            Locator = Locator.replace("XPATH","");
-            Locator = Locator.replace("_"," ");
             scenarioDef.log(Status.PASS,"Clicked on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
                     MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
         }catch (Exception e){
@@ -70,12 +64,10 @@ public class CommonPageFactory extends UtilFactory {
         try{
             waitFactory.waitForElementToBeClickable(locator);
             jsClick(locator);
-            Locator = Locator.replace("XPATH","");
-            Locator = Locator.replace("_"," ");
-            scenarioDef.log(Status.PASS,"Clicked on "+Locator+" Field on "+ScreenName+" Page.");
+            scenarioDef.log(Status.PASS,"Clicked on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.");
         }catch (Exception e){
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL,"Could not Click on "+Locator+" Field on "+ScreenName+" Page.");
+            scenarioDef.log(Status.FAIL,"Could not Click on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.");
             throw e;
         }
     }
@@ -86,8 +78,6 @@ public class CommonPageFactory extends UtilFactory {
             waitFactory.waitForElementToBeClickable(locator);
             String actualText = getText(locator);
             Assert.assertEquals(textToValidate,actualText);
-            Locator = Locator.replace("XPATH","");
-            Locator = Locator.replace("_"," ");
             scenarioDef.log(Status.PASS,"Validated: "+getLocatorNameforLog(textToValidate)+" visible as "+getLocatorNameforLog(Locator)+" on "+PageName+" Page.",
                     MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
         }catch (Exception e){
@@ -104,12 +94,10 @@ public class CommonPageFactory extends UtilFactory {
             waitFactory.waitForElementToBeClickable(locator);
             String actualText = getAttribute(locator,attribute);
             Assert.assertEquals(textToValidate,actualText);
-            Locator = Locator.replace("XPATH","");
-            Locator = Locator.replace("_"," ");
-            scenarioDef.log(Status.PASS,"Validated: "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
+            scenarioDef.log(Status.PASS,"Validated: "+getLocatorNameforLog(textToValidate)+" visible as "+getLocatorNameforLog(Locator)+" on "+PageName+" Page.");
         }catch (Exception e){
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL,"Failed to Validate "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
+            scenarioDef.log(Status.FAIL,"Failed to Validate "+getLocatorNameforLog(textToValidate)+" visible as "+getLocatorNameforLog(Locator)+" on "+PageName+" Page.");
             throw e;
         }
     }

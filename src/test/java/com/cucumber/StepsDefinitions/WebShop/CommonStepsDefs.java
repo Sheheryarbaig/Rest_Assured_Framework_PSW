@@ -65,8 +65,8 @@ public class CommonStepsDefs {
         commonPage.validateValueAttributeScreen(attribute,expectedValue,locator,screenName);
     }
 
-    @And("User JsClick on {string} Button on {string} Page")
-    public void userJsClickOnButtonOnPage(String locator, String screenName) throws Exception {
+    @And("User Clicks on {string} Button on {string} Page")
+    public void userClicksOnButtonOnPage(String locator, String screenName) throws Exception {
         screenName = commonPage.removeSpaces(screenName);
         kWebprop = screenName+kWebprop;
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
