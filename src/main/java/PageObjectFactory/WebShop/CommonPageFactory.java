@@ -27,8 +27,7 @@ public class CommonPageFactory extends UtilFactory {
         try{
             waitFactory.waitForElementToBeClickable(locator);
             enterString(locator,textToEnter);
-            if(locator.contains("pas" +
-                    "s")){
+            if(locator.contains("pass")){
                 Locator = Locator.replace("XPATH","");
                 Locator = Locator.replace("_"," ");
                 scenarioDef.log(Status.PASS,"Entered: "+textToEnter.replaceAll(textToEnter,"****")+" on "+Locator+" Field on "+ScreenName+" Page.");
