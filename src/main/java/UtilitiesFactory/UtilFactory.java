@@ -907,9 +907,8 @@ public class UtilFactory {
             for (File f: files) {
                 f.delete();
             }
-//            delFile.delete();
         }
-        recorder = new ATUTestRecorder(path,"TestVideo-"+datefromat.format(date),false);
+        recorder = new ATUTestRecorder(path,"Execution Video-"+datefromat.format(date),false);
         return recorder;
     }
 
