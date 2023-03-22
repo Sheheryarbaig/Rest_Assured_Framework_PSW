@@ -36,11 +36,11 @@ public class TestRunnerListener implements ITestListener,IExecutionListener {
           serviceFactoryInstance.setBrowser(getParameterValue("browser"));
           emailReporting = getParameterValue("emailReport");
           emailRecipients = getParameterValue("emailRecipients");
-        try {
-            recorder.start();
-        } catch (ATUTestRecorderException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            recorder.start();
+//        } catch (ATUTestRecorderException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override
@@ -69,13 +69,10 @@ public class TestRunnerListener implements ITestListener,IExecutionListener {
             extentReport.ExtentFailStep();
             if(getDriver()!=null){
                 getDriver().quit();
-                recorder.stop();
             }else if (getAndroidDriver()!=null){
                 getAndroidDriver().quit();
-                recorder.stop();
             }else if (getIOSDriver()!=null){
                 getIOSDriver().quit();
-                recorder.stop();
             } else if (getRequest()!=null){
                 setRequest(null);
                 setResponse(null);
@@ -83,37 +80,40 @@ public class TestRunnerListener implements ITestListener,IExecutionListener {
             }
         }catch (IOException e){
             e.printStackTrace();
-        } catch (ATUTestRecorderException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void onStart(ITestContext iTestContext) {
         features = extentReport.extent.createTest(Feature.class, iTestContext.getName());
+        try {
+            recorder.start();
+        } catch (ATUTestRecorderException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void onFinish(ITestContext iTestContext) {
         extentReport.FlushReport();
-        try{
             if(getDriver()!=null){
                 getDriver().quit();
-                recorder.stop();
+                try {
+                    recorder.stop();
+                } catch (ATUTestRecorderException e) {
+                    throw new RuntimeException(e);
+                }
             }else if (getAndroidDriver()!=null){
                 getAndroidDriver().quit();
-                recorder.stop();
+//                recorder.stop();
             }else if (getIOSDriver()!=null){
                 getIOSDriver().quit();
-                recorder.stop();
+//                recorder.stop();
             }else if (getRequest()!=null){
                 setRequest(null);
                 setResponse(null);
                 setParams(null);
             }
-        }catch (ATUTestRecorderException e){
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
@@ -121,6 +121,11 @@ public class TestRunnerListener implements ITestListener,IExecutionListener {
         if (emailReporting.equalsIgnoreCase("on"))
         {
             emailReport.EmailReporter(emailRecipients);
+//            try {
+//                recorder.stop();
+//            } catch (ATUTestRecorderException e) {
+//                throw new RuntimeException(e);
+//            }
         }
     }
 
