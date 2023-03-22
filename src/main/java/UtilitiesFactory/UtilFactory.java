@@ -235,14 +235,12 @@ public class UtilFactory {
         }
     }
 
-    public void hover(String locatorValue)
-    {
+    public void hover(String locatorValue) {
         WebElement element = elementFactory.getElement(locatorValue);
         hover(element);
     }
 
-    protected void hover(WebElement element)
-    {
+    protected void hover(WebElement element) {
         Actions action = new Actions(ServiceFactory.getDriver());
         action.moveToElement(element).perform();
     }

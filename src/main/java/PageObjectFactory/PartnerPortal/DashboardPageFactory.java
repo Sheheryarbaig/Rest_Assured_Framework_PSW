@@ -22,7 +22,7 @@ public class DashboardPageFactory extends UtilFactory {
         }
     }
 
-    public void clickNavigationStartOption(String optionToSelect){
+    public void clickNavigationStartOption(String optionToSelect) {
         String hoverLocator = DashboardPageEnum.XPATH_NAVIGATION_OPTION_START.getValue()+ optionToSelect +DashboardPageEnum.XPATH_NAVIGATION_OPTION_END.getValue();
         String locator = DashboardPageEnum.XPATH_NAVIGATION_START_OPTION_START.getValue()+ optionToSelect +DashboardPageEnum.XPATH_NAVIGATION_START_OPTION_END.getValue();
         try{
