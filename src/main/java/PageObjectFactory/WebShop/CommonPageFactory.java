@@ -1,12 +1,15 @@
 package PageObjectFactory.WebShop;
 
 import EnumFactory.PartnerPortal.DashboardPageEnum;
+import EnumFactory.WebShop.Cart;
 import UtilitiesFactory.UtilFactory;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.MediaEntityModelProvider;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.model.Screencast;
 import org.junit.Assert;
+import org.openqa.selenium.NoSuchContextException;
+import org.openqa.selenium.NoSuchElementException;
 
 public class CommonPageFactory extends UtilFactory {
 
@@ -62,6 +65,21 @@ public class CommonPageFactory extends UtilFactory {
         }
     }
 
+    public void JsclickButton(String Locator,String ScreenName) throws Exception {
+        String locator = UtilFactory.locatorXpath(ScreenName,Locator);
+        try{
+            waitFactory.waitForElementToBeClickable(locator);
+            jsClick(locator);
+            Locator = Locator.replace("XPATH","");
+            Locator = Locator.replace("_"," ");
+            scenarioDef.log(Status.PASS,"Clicked on "+Locator+" Field on "+ScreenName+" Page.");
+        }catch (Exception e){
+            failureException = e.toString();
+            scenarioDef.log(Status.FAIL,"Could not Click on "+Locator+" Field on "+ScreenName+" Page.");
+            throw e;
+        }
+    }
+
     public void validateFieldonScreen(String textToValidate,String Locator,String ScreenName)throws Exception{
         String locator = UtilFactory.locatorXpath(ScreenName,Locator);
         try{
@@ -76,6 +94,22 @@ public class CommonPageFactory extends UtilFactory {
             failureException = e.toString();
             scenarioDef.log(Status.FAIL,"Failed to Validate "+getLocatorNameforLog(textToValidate)+" visible as "+getLocatorNameforLog(Locator)+" on "+PageName+" Page.",
                     MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
+            throw e;
+        }
+    }
+
+    public void validateValueAttributeScreen(String attribute,String textToValidate,String Locator,String ScreenName)throws Exception{
+        String locator = UtilFactory.locatorXpath(ScreenName,Locator);
+        try{
+            waitFactory.waitForElementToBeClickable(locator);
+            String actualText = getAttribute(locator,attribute);
+            Assert.assertEquals(textToValidate,actualText);
+            Locator = Locator.replace("XPATH","");
+            Locator = Locator.replace("_"," ");
+            scenarioDef.log(Status.PASS,"Validated: "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
+        }catch (Exception e){
+            failureException = e.toString();
+            scenarioDef.log(Status.FAIL,"Failed to Validate "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
             throw e;
         }
     }

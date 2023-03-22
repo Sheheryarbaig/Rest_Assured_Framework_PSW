@@ -56,4 +56,20 @@ public class CommonStepsDefs {
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.validateFieldonScreen(expectedValue,locator,screenName);
     }
+
+    @Then("User Validate {string} of {string} Appeared on {string} Page")
+    public void userValidateValueAppearedOnPage(String attribute,String locator, String screenName) throws Exception {
+        screenName = commonPage.removeSpaces(screenName);
+        String expectedValue = new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(locator);
+        locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
+        commonPage.validateValueAttributeScreen(attribute,expectedValue,locator,screenName);
+    }
+
+    @And("User JsClick on {string} Button on {string} Page")
+    public void userJsClickOnButtonOnPage(String locator, String screenName) throws Exception {
+        screenName = commonPage.removeSpaces(screenName);
+        kWebprop = screenName+kWebprop;
+        locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
+        commonPage.JsclickButton(locator,screenName);
+    }
 }
