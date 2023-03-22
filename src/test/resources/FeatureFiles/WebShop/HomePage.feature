@@ -7,7 +7,7 @@ Feature: Homepage
     Then User Validates "krannich.web.title" Title
 
   @20765  @Regression
-  Scenario: Verify Functionality of Cart Page
+  Scenario: Verify Functionality of Home Page, Verify customer lands on Krannich B2B portal and logs in on homepage
     Then User Validate "kws.create.account" Field Appeared on "Web Shop Login" Page
     Then User Validate "kws.contact.us" Field Appeared on "Web Shop Login" Page
     Then User Validate "kws.hello" Field Appeared on "Web Shop Login" Page
