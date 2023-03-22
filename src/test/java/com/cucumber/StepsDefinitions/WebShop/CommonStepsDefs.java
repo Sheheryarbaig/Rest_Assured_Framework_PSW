@@ -19,6 +19,7 @@ import java.util.Enumeration;
 import java.util.Arrays;
 
 public class CommonStepsDefs {
+
     CommonPageFactory commonPage;
     String kWebprop;
 
@@ -81,7 +82,6 @@ public class CommonStepsDefs {
         commonPage.validateDynamicElementOnScreen(locator,testData, screenName);
     }
 
-
     @Then("User Validates {string} of {string} On {string} Page")
     public void userValidatesOfOnPage(String childLocator, String dynamicData, String screenName) throws Exception {
         screenName = commonPage.removeSpaces(screenName);
@@ -118,5 +118,13 @@ public class CommonStepsDefs {
         screenName = commonPage.removeSpaces(screenName);
         expectedText =  new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(expectedText);
         commonPage.validatePageURL(expectedText, screenName);
+
+
+    @And("User Clicks on {string} Button on {string} Page")
+    public void userClicksOnButtonOnPage(String locator, String screenName) throws Exception {
+        screenName = commonPage.removeSpaces(screenName);
+        kWebprop = screenName+kWebprop;
+        locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
+        commonPage.JsclickButton(locator,screenName);
     }
 }
