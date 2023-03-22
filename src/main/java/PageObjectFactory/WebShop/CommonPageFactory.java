@@ -2,18 +2,23 @@ package PageObjectFactory.WebShop;
 
 import EnumFactory.PartnerPortal.DashboardPageEnum;
 import UtilitiesFactory.UtilFactory;
+import com.aventstack.extentreports.MediaEntityBuilder;
+import com.aventstack.extentreports.MediaEntityModelProvider;
 import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.model.Screencast;
 import org.junit.Assert;
 
 public class CommonPageFactory extends UtilFactory {
 
     public static String EnumDirectory = "EnumFactory.WebShop.*";
+    public static String PageName;
 
     public CommonPageFactory() throws Exception {
     }
 
     //T0 Do Update Screen Name as to Read Properties
     public String removeSpaces(String ScreenName) {
+        PageName = ScreenName;
         String propertyFileName = ScreenName.replace(" ","");
         return propertyFileName;
     }
@@ -25,15 +30,18 @@ public class CommonPageFactory extends UtilFactory {
             if(locator.contains("pass")){
                 Locator = Locator.replace("XPATH","");
                 Locator = Locator.replace("_"," ");
-                scenarioDef.log(Status.PASS,"Entered: "+textToEnter.replaceAll(textToEnter,"****")+" on "+Locator+" Field on "+ScreenName+" Page.");
+                scenarioDef.log(Status.PASS,"Entered: "+textToEnter.replaceAll(textToEnter,"****")+" on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                        MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             }else{
                 Locator = Locator.replace("XPATH","");
                 Locator = Locator.replace("_"," ");
-                scenarioDef.log(Status.PASS,"Entered: "+textToEnter+" on "+Locator+" Field on "+ScreenName+" Page.");
+                scenarioDef.log(Status.PASS,"Entered: "+getLocatorNameforLog(textToEnter)+" on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                        MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             }
         }catch (Exception e){
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL,"Could not Enter: "+textToEnter+" on "+Locator+" Field on "+ScreenName+" Page.");
+            scenarioDef.log(Status.FAIL,"Could not Enter: "+getLocatorNameforLog(textToEnter)+" on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                    MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             throw e;
         }
     }
@@ -44,10 +52,12 @@ public class CommonPageFactory extends UtilFactory {
             click(locator);
             Locator = Locator.replace("XPATH","");
             Locator = Locator.replace("_"," ");
-            scenarioDef.log(Status.PASS,"Clicked on "+Locator+" Field on "+ScreenName+" Page.");
+            scenarioDef.log(Status.PASS,"Clicked on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                    MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
         }catch (Exception e){
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL,"Could not Click on "+Locator+" Field on "+ScreenName+" Page.");
+            scenarioDef.log(Status.FAIL,"Could not Click on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                    MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             throw e;
         }
     }
@@ -60,10 +70,12 @@ public class CommonPageFactory extends UtilFactory {
             Assert.assertEquals(textToValidate,actualText);
             Locator = Locator.replace("XPATH","");
             Locator = Locator.replace("_"," ");
-            scenarioDef.log(Status.PASS,"Validated: "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
+            scenarioDef.log(Status.PASS,"Validated: "+getLocatorNameforLog(textToValidate)+" visible as "+getLocatorNameforLog(Locator)+" on "+PageName+" Page.",
+                    MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
         }catch (Exception e){
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL,"Failed to Validate "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
+            scenarioDef.log(Status.FAIL,"Failed to Validate "+getLocatorNameforLog(textToValidate)+" visible as "+getLocatorNameforLog(Locator)+" on "+PageName+" Page.",
+                    MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             throw e;
         }
     }

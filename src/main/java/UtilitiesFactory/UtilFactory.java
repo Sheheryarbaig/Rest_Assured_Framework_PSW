@@ -14,6 +14,7 @@ import io.appium.java_client.touch.offset.PointOption;
 import io.restassured.response.Response;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.openqa.selenium.*;
@@ -64,6 +65,7 @@ public class UtilFactory {
     public ExtentReports extent;
 
     public static String scenarioName;
+    public static String PageName;
     public static ExtentTest scenarioDef;
     public static ExtentTest features;
     public static String failureException;
@@ -414,6 +416,37 @@ public class UtilFactory {
         byte[] fileContent = FileUtils.readFileToByteArray(source);
         Base64StringofScreenshot = "data:image/png;base64," + Base64.getEncoder().encodeToString(fileContent);
         return Base64StringofScreenshot;
+    }
+
+    public static String getVideocreenshot() throws IOException {
+
+        String getVideocreenshot="";
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM/dd/");
+        DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("__HH_mm_ss");
+        LocalDateTime now = LocalDateTime.now();
+        TakesScreenshot ts;
+        if(deviceName.equalsIgnoreCase("ANDROID")){
+            ts = ServiceFactory.getAndroidDriver();
+        }else if (deviceName.equalsIgnoreCase("IOS")){
+            ts = ServiceFactory.getIOSDriver();
+        }else{
+            ts = (TakesScreenshot) ServiceFactory.getDriver();
+        }
+        File source = ts.getScreenshotAs(OutputType.FILE);
+
+        String dest = screenshotFolder + "/" +dtf.format(now) + "/" + deviceName + "/" +scenarioName+"/" +dtf2.format(now)+ ".mp4";
+
+        File destination = new File(dest);
+        FileUtils.copyFile(source, destination);
+
+        return getVideocreenshot;
+    }
+
+    public static String getLocatorNameforLog(String Locator) throws IOException {
+        Locator = Locator.replace("XPATH_","");
+        Locator = Locator.replace("_"," ");
+        Locator = WordUtils.capitalizeFully(Locator);
+        return Locator;
     }
 
     protected void clearSession(){

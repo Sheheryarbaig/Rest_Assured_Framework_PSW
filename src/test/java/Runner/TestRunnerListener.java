@@ -6,6 +6,7 @@ import UtilitiesFactory.ExtentReportFactory;
 import UtilitiesFactory.UtilFactory;
 import atu.testrecorder.ATUTestRecorder;
 import atu.testrecorder.exceptions.ATUTestRecorderException;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.gherkin.model.Feature;
 import org.testng.*;
 import java.io.IOException;
