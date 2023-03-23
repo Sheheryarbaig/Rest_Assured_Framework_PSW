@@ -92,6 +92,18 @@ public class CommonPageFactory extends UtilFactory {
         }
     }
 
+    public void hoverOnButton(String Locator,String ScreenName) throws ClassNotFoundException, Exception {
+        String locator = UtilFactory.locatorXpath(ScreenName,Locator);
+        try{
+            waitFactory.waitForElementToBeVisible(locator);
+            hover(locator);
+            scenarioDef.log(Status.PASS,getLocatorNameforLog(Locator) + " is visible " + " on "+PageName+" Page.");
+        }catch (Exception e){
+            failureException = e.toString();
+            scenarioDef.log(Status.FAIL,getLocatorNameforLog(Locator) + " is not visible " + " on "+PageName+" Page.");
+            throw e;
+        }
+    }
     public void validateValueAttributeScreen(String attribute,String textToValidate,String Locator,String ScreenName)throws Exception{
         String locator = UtilFactory.locatorXpath(ScreenName,Locator);
         try{
@@ -106,51 +118,19 @@ public class CommonPageFactory extends UtilFactory {
         }
     }
 
-    public void hoverOnButton(String Locator,String ScreenName) throws ClassNotFoundException, InterruptedException {
-        String locator = UtilFactory.locatorXpath(ScreenName,Locator);
-        try{
-            waitFactory.waitForElementToBeVisible(locator);
-            hover(locator);
-            Locator = Locator.replace("XPATH","");
-            Locator = Locator.replace("_"," ");
-            scenarioDef.log(Status.PASS,Locator + " is visible " + " on "+ScreenName+" Page.");
-        }catch (Exception e){
-            failureException = e.toString();
-            scenarioDef.log(Status.FAIL,Locator + " is not visible " + " on "+ScreenName+" Page.");
-            throw e;
-        }
-    }
-    public void validateValueAttributeScreen(String attribute,String textToValidate,String Locator,String ScreenName)throws Exception{
-        String locator = UtilFactory.locatorXpath(ScreenName,Locator);
-        try{
-            waitFactory.waitForElementToBeClickable(locator);
-            String actualText = getAttribute(locator,attribute);
-            Assert.assertEquals(textToValidate,actualText);
-            Locator = Locator.replace("XPATH","");
-            Locator = Locator.replace("_"," ");
-            scenarioDef.log(Status.PASS,"Validated: "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
-        }catch (Exception e){
-            failureException = e.toString();
-            scenarioDef.log(Status.FAIL,"Failed to Validate "+textToValidate+" visible as "+Locator+" on "+ScreenName+" Page.");
-            throw e;
-        }
-    }
-
-    public void validateDynamicElementOnScreen(String Locator,String testData, String ScreenName) throws ClassNotFoundException {
+    public void validateDynamicElementOnScreen(String Locator,String testData, String ScreenName) throws Exception {
         String locator = UtilFactory.locatorXpath(ScreenName,Locator)+testData+"')]";
         try{
             waitFactory.waitForElementToBeVisible(locator);
-            Locator = Locator.replace("XPATH","");
-            Locator = Locator.replace("_"," ");
-            scenarioDef.log(Status.PASS,Locator + " is visible  on " + ScreenName+" Page.");
+            scenarioDef.log(Status.PASS,getLocatorNameforLog(Locator) + " is visible  on " + ScreenName+" Page.");
         }catch (Exception e){
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL,Locator + " is not visible  on " + ScreenName+" Page.");
+            scenarioDef.log(Status.FAIL,getLocatorNameforLog(Locator) + " is not visible  on " + ScreenName+" Page.");
             throw e;
         }
     }
 
-    public void validateDynamicString(String productNameLocator, String productName, String productPrice, String expectedValue, String ScreenName) throws ClassNotFoundException {
+    public void validateDynamicString(String productNameLocator, String productName, String productPrice, String expectedValue, String ScreenName) throws Exception {
         String Locator = UtilFactory.locatorXpath(ScreenName,productNameLocator)+ productName +"')]" ;
         Locator = Locator + UtilFactory.locatorXpath(ScreenName,productPrice);
         try {
@@ -159,33 +139,31 @@ public class CommonPageFactory extends UtilFactory {
             if (actualText.contains(expectedValue)) {
                 scenarioDef.log(Status.PASS, "Validated Dollar Symbol in Product Price " + actualText + " on " + ScreenName + "Page.");
             } else {
-                scenarioDef.log(Status.PASS, "Dollar Symbol is not visible in Product Price " + actualText + " on " + ScreenName);
+                scenarioDef.log(Status.PASS, "Dollar Symbol is not visible in Product Price " + actualText + " on " + PageName);
             }
         }catch (Exception e){
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL,Locator + " is not visible  on " + ScreenName+" Page.");
+            scenarioDef.log(Status.FAIL,getLocatorNameforLog(Locator) + " is not visible  on " + PageName+" Page.");
             throw e;
         }
 
     }
 
-    public void clickOnDynamicElement(String Locator1, String dynamicData, String Locator2, String ScreenName) throws ClassNotFoundException {
+    public void clickOnDynamicElement(String Locator1, String dynamicData, String Locator2, String ScreenName) throws Exception {
         String locator = UtilFactory.locatorXpath(ScreenName, Locator1) + dynamicData + "')]";
         locator = locator + UtilFactory.locatorXpath(ScreenName, Locator2);
         try {
             waitFactory.waitForElementToBeClickable(locator);
             click(locator);
-            Locator2 = Locator2.replace("XPATH", "");
-            Locator2 = Locator2.replace("_", " ");
-            scenarioDef.log(Status.PASS, "Clicked on " + Locator2 + " Field on " + ScreenName + " Page.");
+            scenarioDef.log(Status.PASS, "Clicked on " + getLocatorNameforLog(Locator2) + " Field on " + PageName + " Page.");
         } catch (Exception e) {
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL, "Could not Click on " + Locator2 + " Field on " + ScreenName + " Page.");
+            scenarioDef.log(Status.FAIL, "Could not Click on " + getLocatorNameforLog(Locator2) + " Field on " + PageName + " Page.");
             throw e;
         }
     }
 
-    public void validateDynamicElementColorOnHover(String Locator1, String dynamicData, String Locator2, String colorToValidate, String ScreenName) throws ClassNotFoundException, InterruptedException {
+    public void validateDynamicElementColorOnHover(String Locator1, String dynamicData, String Locator2, String colorToValidate, String ScreenName) throws Exception {
         String locator = UtilFactory.locatorXpath(ScreenName, Locator1) + dynamicData + "')]";
         locator = locator + UtilFactory.locatorXpath(ScreenName, Locator2);
         try {
@@ -195,13 +173,10 @@ public class CommonPageFactory extends UtilFactory {
             String actualColor = getCSS(locator,"background-color");
             System.out.println(actualColor);
             Assert.assertEquals(colorToValidate,actualColor);
-
-            Locator2 = Locator2.replace("XPATH", "");
-            Locator2 = Locator2.replace("_", " ");
-            scenarioDef.log(Status.PASS, "Validated Color of " + Locator2 + " Element on Hovering  at " + ScreenName + " Page.");
+            scenarioDef.log(Status.PASS, "Validated Color of " + getLocatorNameforLog(Locator2) + " Element on Hovering  at " + PageName + " Page.");
         } catch (Exception e) {
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL, "Could not validate color of " + Locator2 + " Element on Hovering  at " + ScreenName + " Page.");
+            scenarioDef.log(Status.FAIL, "Could not validate color of " + getLocatorNameforLog(Locator2) + " Element on Hovering  at " + PageName + " Page.");
             throw e;
         }
     }
@@ -209,10 +184,10 @@ public class CommonPageFactory extends UtilFactory {
     public void validatePageURL(String expectedText, String screenName) {
         try {
             validateURL(expectedText);
-            scenarioDef.log(Status.PASS, "Navigated to " + screenName + " Page");
+            scenarioDef.log(Status.PASS, "Navigated to " + PageName + " Page");
         } catch (Exception e) {
             failureException = e.toString();
-            scenarioDef.log(Status.FAIL, "Could not navigate to " + screenName + " Page");
+            scenarioDef.log(Status.FAIL, "Could not navigate to " + PageName + " Page");
             throw e;
         }
 

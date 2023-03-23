@@ -116,8 +116,9 @@ public class CommonStepsDefs {
     @Then("User Validates {string} URL on {string} Page")
     public void userValidatesURLOnPage(String expectedText, String screenName) throws Exception {
         screenName = commonPage.removeSpaces(screenName);
-        expectedText =  new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(expectedText);
+        expectedText = new PropertyLoaderFactory().getTestDataPropertyFile(screenName + ".properties").getProperty(expectedText);
         commonPage.validatePageURL(expectedText, screenName);
+    }
 
 
     @And("User Clicks on {string} Button on {string} Page")
