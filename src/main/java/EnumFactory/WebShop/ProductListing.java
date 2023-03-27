@@ -10,7 +10,9 @@ public enum ProductListing {
     XPATH_ADD_TO_CART_BUTTON("//ancestor::li//button[@aria-label='ADD TO CART']"),
     XPATH_QUICK_VIEW("//div[@data-m-t='quickview' and contains(@aria-label,'"),
     XPATH_QUICK_VIEW_CLOSE_ICON("//button[@class='msc-modal__close-button']"),
-    XPATH_PRODUCT_CARD("//ancestor::li")
+    XPATH_PRODUCT_CARD("//ancestor::li"),
+    XPATH_NAVIGATE_TO_SEARCH_RESULT("//li[@class='ms-product-search-result__item']//a")
+
     ;
 
     private String pageVariables;

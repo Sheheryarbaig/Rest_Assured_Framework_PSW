@@ -33,6 +33,7 @@ public class CommonPageFactory extends UtilFactory {
         String locator = UtilFactory.locatorXpath(ScreenName,Locator);
         try{
             waitFactory.waitForElementToBeClickable(locator);
+            clearField(locator);
             enterString(locator,textToEnter);
             if(locator.contains("pass")){
                 scenarioDef.log(Status.PASS,"Entered: "+textToEnter.replaceAll(textToEnter,"****")+" on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
@@ -120,6 +121,18 @@ public class CommonPageFactory extends UtilFactory {
 
     public void validateDynamicElementOnScreen(String Locator,String testData, String ScreenName) throws Exception {
         String locator = UtilFactory.locatorXpath(ScreenName,Locator)+testData+"')]";
+        try{
+            waitFactory.waitForElementToBeVisible(locator);
+            scenarioDef.log(Status.PASS,getLocatorNameforLog(Locator) + " is visible  on " + ScreenName+" Page.");
+        }catch (Exception e){
+            failureException = e.toString();
+            scenarioDef.log(Status.FAIL,getLocatorNameforLog(Locator) + " is not visible  on " + ScreenName+" Page.");
+            throw e;
+        }
+    }
+
+    public void validateElementOnScreen(String Locator, String ScreenName) throws Exception {
+        String locator = UtilFactory.locatorXpath(ScreenName,Locator);
         try{
             waitFactory.waitForElementToBeVisible(locator);
             scenarioDef.log(Status.PASS,getLocatorNameforLog(Locator) + " is visible  on " + ScreenName+" Page.");
