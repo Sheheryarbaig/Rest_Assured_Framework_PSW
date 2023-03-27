@@ -59,6 +59,7 @@ public class CommonStepsDefs {
         commonPage.validateFieldonScreen(expectedValue,locator,screenName);
     }
 
+
     @When("User Hovers on {string} Button on {string} Page")
     public void userHoversOnButtonOnPage(String locator, String screenName) throws Exception {
         screenName = commonPage.removeSpaces(screenName);
@@ -81,6 +82,14 @@ public class CommonStepsDefs {
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.validateDynamicElementOnScreen(locator,testData, screenName);
     }
+
+    @Then("User Validates {string} Element Displayed on {string} Page")
+    public void userValidatesElementDisplayedOnPage(String locator, String screenName) throws Exception {
+        screenName = commonPage.removeSpaces(screenName);
+        locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
+        commonPage.validateElementOnScreen(locator,screenName);
+    }
+
 
     @Then("User Validates {string} of {string} On {string} Page")
     public void userValidatesOfOnPage(String childLocator, String dynamicData, String screenName) throws Exception {
