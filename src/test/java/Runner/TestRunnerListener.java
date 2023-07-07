@@ -68,7 +68,7 @@ public class TestRunnerListener implements ITestListener,IExecutionListener {
         try{
             extentReport.ExtentFailStep();
             if(getDriver()!=null){
-                getDriver().quit();
+//                getDriver().quit();
             }else if (getAndroidDriver()!=null){
                 getAndroidDriver().quit();
             }else if (getIOSDriver()!=null){
@@ -97,7 +97,7 @@ public class TestRunnerListener implements ITestListener,IExecutionListener {
     public void onFinish(ITestContext iTestContext) {
         extentReport.FlushReport();
             if(getDriver()!=null){
-                getDriver().quit();
+               // getDriver().quit();
                 try {
                     recorder.stop();
                 } catch (ATUTestRecorderException e) {

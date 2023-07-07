@@ -5,7 +5,8 @@ public enum Cart {
     XPATH_ITEM_QUANTITY("(//input[@class='quantity-input'])[2]"),
     XPATH_INCREASE_QUANTITY("(//*[@class='quantity']//button[@class='increment quantity__controls '])[2]"),
     XPATH_MAX_QUANTITY_MSG("//div[@class='cart-line-error-contianer']"),
-    XPATH_ITEM("(//*[@class='msc-cart-line__product-title'])[1]");
+    XPATH_ITEM("(//*[@class='msc-cart-line__product-title'])[1]"),
+    XPATH_CHECKOUT_CART("//button[contains(@title,'Checkout')]");
     private String pageVariables;
 
     private Cart(String pageVariables) {

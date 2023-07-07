@@ -19,7 +19,6 @@ public class CommonPageFactory extends UtilFactory {
 
     public static String EnumDirectory = "EnumFactory.WebShop.*";
     public static String PageName;
-
     public CommonPageFactory() throws Exception {
     }
 
@@ -29,17 +28,23 @@ public class CommonPageFactory extends UtilFactory {
         String propertyFileName = ScreenName.replace(" ","");
         return propertyFileName;
     }
+    public String getpropertyName(String fieldProperty) {
+        String propertyFileName = fieldProperty.replace(" ",".");
+        return propertyFileName;
+    }
     public void textEnterField(String textToEnter,String Locator,String ScreenName) throws Exception{
         String locator = UtilFactory.locatorXpath(ScreenName,Locator);
         try{
             waitFactory.waitForElementToBeClickable(locator);
-            clearField(locator);
+            if(!Locator.equals("XPATH_CHANNEL_REFERENCE_SEARCH")){
+                clearField(locator);
+            }
             enterString(locator,textToEnter);
             if(locator.contains("pass")){
-                scenarioDef.log(Status.PASS,"Entered: "+textToEnter.replaceAll(textToEnter,"****")+" on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                scenarioDef.log(Status.PASS,"Entered: "+textToEnter.replaceAll(textToEnter,"****")+" in "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
                         MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             }else{
-                scenarioDef.log(Status.PASS,"Entered: "+getLocatorNameforLog(textToEnter)+" on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                scenarioDef.log(Status.PASS,"Entered: "+getLocatorNameforLog(textToEnter)+" in "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
                         MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
             }
         }catch (Exception e){
@@ -49,9 +54,15 @@ public class CommonPageFactory extends UtilFactory {
             throw e;
         }
     }
+
     public void clickButton(String Locator,String ScreenName) throws Exception {
         String locator = UtilFactory.locatorXpath(ScreenName,Locator);
+        if(Locator.contains("XPATH_APPLY_SHIPPING")){
+            waitFactory.waitForElementToBeClickable(locator);
+            Thread.sleep(10000);
+        }
         try{
+            waitForPageLoad();
             waitFactory.waitForElementToBeClickable(locator);
             click(locator);
             scenarioDef.log(Status.PASS,"Clicked on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
@@ -204,5 +215,22 @@ public class CommonPageFactory extends UtilFactory {
             throw e;
         }
 
+    }
+
+    public String getElementValue(String Locator,String ScreenName, String Value) throws Exception {
+        String locator = UtilFactory.locatorXpath(ScreenName,Locator);
+        try{
+            waitFactory.waitForElementToBeClickable(locator);
+            Value = getText(locator);
+            System.out.println("Value is - "+Value);
+            scenarioDef.log(Status.PASS,"Clicked on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                    MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
+        }catch (Exception e){
+            failureException = e.toString();
+            scenarioDef.log(Status.FAIL,"Could not Click on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
+                    MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
+            throw e;
+        }
+        return Value;
     }
 }

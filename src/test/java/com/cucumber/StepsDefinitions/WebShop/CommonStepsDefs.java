@@ -1,35 +1,81 @@
 package com.cucumber.StepsDefinitions.WebShop;
 
-import EnumFactory.WebShop.WebShopLogin;
-import PageObjectFactory.PartnerPortal.DashboardPageFactory;
-import PageObjectFactory.PartnerPortal.LoginPageFactory;
+import EnumFactory.WebShop.GetAPI;
+import EnumFactory.WebShop.PatchAPI;
+import EnumFactory.WebShop.PostAPI;
 import PageObjectFactory.WebShop.CommonPageFactory;
-import UtilitiesFactory.PropertyLoaderFactory;
-import UtilitiesFactory.ServiceFactory;
-import UtilitiesFactory.UtilFactory;
+import UtilitiesFactory.*;
+import com.cucumber.StepsDefinitions.HarnessVariables;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.json.JSONObject;
 import org.junit.Assert;
 
+import javax.sound.midi.Soundbank;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 
 import java.util.Arrays;
 
-public class CommonStepsDefs {
+import static UtilitiesFactory.UtilFactory.serviceFactoryInstance;
+import static org.testng.AssertJUnit.assertEquals;
+
+public class CommonStepsDefs extends HarnessVariables {
 
     CommonPageFactory commonPage;
     String kWebprop;
+    String runPropFile = "run.properties";
+    String runPropFile1="post_request.json";
+    public static String OrderID = "";
 
     public CommonStepsDefs() throws Exception {
         commonPage = new CommonPageFactory();
     }
+
+    @Given("User Setup Web Browser Session")
+    public void userSetupWebBrowserSession() throws Exception {
+        serviceFactoryInstance.setDriver(serviceFactoryInstance.getBrowser());
+        deviceName = "WEB";
+        waitFactory = new WaitFactory(ServiceFactory.getDriver());
+        elementFactory = new ElementFactory(ServiceFactory.getDriver());
+    }
+
+    @Then("User Navigates to {string} URL")
+    public void userNavigatesToURL(String url) throws Exception {
+     // if(url.equals("Krannich Dynamics Application")){
+          //Thread.sleep(160000)
+     //}else if(url.equals("Online Store Transactions")){
+//            Thread.sleep(160000);
+//
+//        }
+        url = commonPage.getpropertyName(url);
+        url = new PropertyLoaderFactory().getPropertyFile(runPropFile).getProperty(url);
+
+        ServiceFactory.getDriver().get(url);
+    }
+
+    @Then("User Validates {string} Title")
+    public void userValidatesTitle(String expectedTitle) throws Exception {
+        expectedTitle = commonPage.getpropertyName(expectedTitle);
+        expectedTitle = new PropertyLoaderFactory().getPropertyFile(runPropFile).getProperty(expectedTitle);
+        String actualTitle = ServiceFactory.getDriver().getTitle();
+        Assert.assertEquals(expectedTitle,actualTitle);
+    }
     @When("User Enters {string} on {string} Field on {string} Page")
     public void user_enters_on_field_on_page(String testData, String locator, String screenName) throws Exception{
         screenName = commonPage.removeSpaces(screenName);
-        testData = new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(testData);
+
+        if(testData.equals("Sales Order Number")){
+            testData = OrderID;
+//            testData = "18E742BJOHNC";
+        }else{
+            testData=commonPage.getpropertyName(testData);
+            testData = new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(testData);
+        }
+        locator=commonPage.getpropertyName(locator);
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.textEnterField(testData,locator,screenName);
     }
@@ -37,6 +83,7 @@ public class CommonStepsDefs {
     @And("User Click on {string} Button on {string} Page")
     public void userClickOnButtonOnPage(String locator, String screenName) throws Exception{
         screenName = commonPage.removeSpaces(screenName);
+        locator=commonPage.getpropertyName(locator);
         kWebprop = screenName+kWebprop;
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.clickButton(locator,screenName);
@@ -54,7 +101,13 @@ public class CommonStepsDefs {
     @Then("User Validate {string} Field Appeared on {string} Page")
     public void userValidateFieldAppearedOnPage(String locator, String screenName) throws Exception {
         screenName = commonPage.removeSpaces(screenName);
-        String expectedValue = new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(locator);
+        locator=commonPage.getpropertyName(locator);
+        String expectedValue = null;
+        if(locator.equals("Sales.Order.Number")){
+            expectedValue = OrderID;
+        }else{
+            expectedValue = new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(locator);
+        }
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.validateFieldonScreen(expectedValue,locator,screenName);
     }
@@ -70,7 +123,13 @@ public class CommonStepsDefs {
     @Then("User Validate {string} of {string} Appeared on {string} Page")
     public void userValidateValueAppearedOnPage(String attribute,String locator, String screenName) throws Exception {
         screenName = commonPage.removeSpaces(screenName);
-        String expectedValue = new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(locator);
+        locator=commonPage.getpropertyName(locator);
+        String expectedValue = null;
+        if(locator.equals("Sales.Order.Number")){
+            expectedValue = OrderID;
+        }else{
+            expectedValue = new PropertyLoaderFactory().getTestDataPropertyFile(screenName+".properties").getProperty(locator);
+        }
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.validateValueAttributeScreen(attribute,expectedValue,locator,screenName);
     }
@@ -88,6 +147,12 @@ public class CommonStepsDefs {
         screenName = commonPage.removeSpaces(screenName);
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.validateElementOnScreen(locator,screenName);
+        String Value = "";
+        Value = commonPage.getElementValue(locator,screenName,Value);
+        if(locator.equals("XPATH_SALES_ORDER_ID")){
+            OrderID = Value;
+            System.out.println("Dynamics Order ID is - "+OrderID);
+        }
     }
 
 
@@ -132,9 +197,56 @@ public class CommonStepsDefs {
 
     @And("User Clicks on {string} Button on {string} Page")
     public void userClicksOnButtonOnPage(String locator, String screenName) throws Exception {
+//        if(locator.equals("Apply")){
+//            Thread.sleep(30000);
+//        }
         screenName = commonPage.removeSpaces(screenName);
+        locator=commonPage.getpropertyName(locator);
         kWebprop = screenName+kWebprop;
         locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
         commonPage.JsclickButton(locator,screenName);
     }
+
+    @Then("User Get {string} from {string} Page")
+    public void userGetFromPage(String locator, String screenName) throws Exception {
+        screenName = commonPage.removeSpaces(screenName);
+        locator=commonPage.getpropertyName(locator);
+        kWebprop = screenName+kWebprop;
+        locator = new PropertyLoaderFactory().getLocatorPropertyFile(screenName+".properties").getProperty(locator);
+        String Value = "";
+        Value = commonPage.getElementValue(locator,screenName,Value);
+        if(locator.equals("XPATH_ORDER_REQUEST_ID")){
+            OrderID = Value;
+            System.out.println("Order ID is - "+OrderID);
+        }
+    }
+    private GetAPI getAPI;
+    private PostAPI postAPI;
+    private PatchAPI patchAPI;
+    @When("User Validate to {string} and {string} URL")
+    public void userNavigatesToGetURL(String requestType,String url) throws Exception {
+
+        url = commonPage.getpropertyName(url);
+        url = new PropertyLoaderFactory().getPropertyFile(runPropFile).getProperty(url);
+
+        if (requestType.equalsIgnoreCase("Get")) {
+            String endpoint = url;  // Set the GET API endpoint
+            getAPI = GetAPI.INSTANCE;
+            getAPI.performGetRequest(endpoint);
+        } else if (requestType.equalsIgnoreCase("Post")) {
+
+            String endpoint = url;  // Set the GET API endpoint
+            postAPI = PostAPI.INSTANCE;
+            postAPI.performPostRequest(endpoint);
+
+}
+        else if (requestType.equalsIgnoreCase("Patch")) {
+
+            String endpoint = url;  // Set the GET API endpoint
+            patchAPI = PatchAPI.INSTANCE;
+            patchAPI.performPatchRequest(endpoint);
+
+        }
+    }
+
 }

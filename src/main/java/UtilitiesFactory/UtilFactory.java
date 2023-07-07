@@ -13,6 +13,7 @@ import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import io.restassured.response.Response;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.json.simple.JSONObject;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -179,7 +181,7 @@ public class UtilFactory {
     protected void enterString(String locatorValue, String fieldValue)
     {
         WebElement element = elementFactory.getElement(locatorValue);
-        element.clear();
+//        element.clear();
         enterString(element,fieldValue);
     }
 
@@ -911,7 +913,15 @@ public class UtilFactory {
         recorder = new ATUTestRecorder(path,"Execution Video-"+datefromat.format(date),false);
         return recorder;
     }
-
+    public static String loadJSONFile(String filePath) {
+        try {
+            byte[] encodedBytes = Files.readAllBytes(Paths.get(filePath));
+            return new String(encodedBytes, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 //

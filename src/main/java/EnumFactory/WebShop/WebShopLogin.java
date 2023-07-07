@@ -10,6 +10,7 @@ public enum WebShopLogin {
     XPATH_CREATE_ACCOUNT_BUTTON("//a[@data-exp-event-id='Homepage.Content block 11.Create an account.click']"),
     XPATH_CONTACT_US_BUTTON("//a[@data-exp-event-id='Homepage.Content block 11.CONTACT US.click']//div"),
     XPATH_TITLE("//span[@class='_title']"),
+    XPATH_ACCEPT_COOKEIS("//button[contains(@class,'ms-cookie-compliance__accept-button msc-btn')]"),
     XPATH_SIGN_IN_HEADING("//h2[@class='ms-content-block__title']");
     private String pageVariables;
 
