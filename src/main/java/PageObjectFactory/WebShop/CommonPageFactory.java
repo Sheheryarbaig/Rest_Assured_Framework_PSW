@@ -1,6 +1,7 @@
 package PageObjectFactory.WebShop;
 
 import EnumFactory.WebShop.ProductListing;
+import UtilitiesFactory.PropertyLoaderFactory;
 import UtilitiesFactory.ServiceFactory;
 import EnumFactory.WebShop.Cart;
 import UtilitiesFactory.UtilFactory;
@@ -8,6 +9,15 @@ import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.MediaEntityModelProvider;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.model.Screencast;
+import io.restassured.config.EncoderConfig;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -15,10 +25,21 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.NoSuchContextException;
 import org.openqa.selenium.NoSuchElementException;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+import static io.restassured.RestAssured.given;
+
 public class CommonPageFactory extends UtilFactory {
 
     public static String EnumDirectory = "EnumFactory.WebShop.*";
     public static String PageName;
+    static Response Response;
+    static Response POSTResponse;
+    static String accessToken;
+    static String PSID;
     public CommonPageFactory() throws Exception {
     }
 
@@ -103,6 +124,7 @@ public class CommonPageFactory extends UtilFactory {
             throw e;
         }
     }
+
 
     public void hoverOnButton(String Locator,String ScreenName) throws ClassNotFoundException, Exception {
         String locator = UtilFactory.locatorXpath(ScreenName,Locator);
@@ -222,7 +244,11 @@ public class CommonPageFactory extends UtilFactory {
         try{
             waitFactory.waitForElementToBeClickable(locator);
             Value = getText(locator);
-            System.out.println("Value is - "+Value);
+            if(locator.equals("//*[@id=\"sub-fee-slip-subscriptionFees-data\"]/strong"))
+            {
+                PSID=Value;
+            }
+
             scenarioDef.log(Status.PASS,"Clicked on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
                     MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
         }catch (Exception e){
@@ -233,4 +259,120 @@ public class CommonPageFactory extends UtilFactory {
         }
         return Value;
     }
+
+
+
+   // [1:08 PM] Muhammed Hamza Shahab
+
+    public static Response GETRequest(String APIUrl) throws IOException
+    {
+        Response=
+                given().
+                        when().
+                        get(APIUrl);
+        ResponseBody body = Response.getBody();
+        System.out.println(body.asString());
+        System.out.println(Response.getStatusCode() );
+        return Response;
+    }
+
+    public static void getStatusCode(String code) throws IOException
+
+    {
+        int get_response = Response.getStatusCode();
+        System.out.println(get_response);
+        int status= Integer.parseInt(code);
+        System.out.println(status);
+        Assert.assertEquals(status, get_response);
+
+    }
+
+    public static Response POSTRequest(String APIUrl, String APIBody) throws Exception
+    {
+        JSONObject requestBody =  PropertyLoaderFactory.getRequestFile(APIBody);
+        // Retrieve the inner JSON object 'data'
+        if(APIUrl.equals("http://qa.psw.gov.pk/api/ups/PSID/secure")){
+            JSONObject dataObject = (JSONObject) requestBody.get("data");
+
+            // Update the 'psid' value in the 'data' object
+            dataObject.put("psid", PSID);
+        }
+
+        Response=
+                given().
+                        header("Content-type", "application/json").
+                        header("Authorization", "Bearer " + accessToken).
+                        body(requestBody).
+                        when().
+                        post(APIUrl);
+        ResponseBody body = Response.getBody();
+        System.out.println(body.asString());
+        System.out.println(Response.getStatusCode() );
+        return Response;
+    }
+    public static Response PSWPOSTRequest(String APIUrl, String APIBody) throws Exception
+    {
+        System.out.println(APIUrl);
+
+        JSONObject requestBody =  PropertyLoaderFactory.getRequestFile(APIBody);
+        String a=requestBody.toString();
+        System.out.println(requestBody);
+        JSONObject jsonObject = (JSONObject) JSONValue.parse(a);
+
+        Map<String, String> params = new HashMap<>();
+        for (Object key : jsonObject.keySet()) {
+            params.put(key.toString(), jsonObject.get(key).toString());
+        }
+        StringBuilder formData = new StringBuilder();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (formData.length() > 0) {
+                formData.append("&");
+            }
+            formData.append(entry.getKey()).append("=").append(entry.getValue());
+        }
+        formData= new StringBuilder(formData.toString());
+        RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), String.valueOf(formData));
+        String json = new String(a.getBytes(), StandardCharsets.UTF_8);
+
+        System.out.println(body);
+        Response=
+                given()
+
+                        .contentType("application/x-www-form-urlencoded; charset=utf-8")
+                        .formParam("grant_type", "password")
+                        .formParam("username", "UN-00-0656781")
+                        .formParam("password", "Test@1234")
+                        .formParam("client_id", "psw.client.spa")
+                        .when().
+                        post(APIUrl);
+        String responseBody = Response.getBody().asString();
+        accessToken = Response.jsonPath().getString("access_token");
+        ResponseBody body1 = Response.getBody();
+
+        System.out.println(body1.asString());
+        System.out.println(Response.getStatusCode() );
+        return Response;
+    }
+    public static Response PATCHRequest(String APIUrl, String APIBody) throws Exception
+    {
+        System.out.println(APIUrl);
+        System.out.println(APIBody);
+        JSONObject requestBody =  PropertyLoaderFactory.getRequestFile(APIBody);
+
+        Response=
+                given().
+//                        header("Content-type", "application/json").
+        body(requestBody).
+                        when().
+                        patch(APIUrl);
+        ResponseBody body = Response.getBody();
+        System.out.println(body.asString());
+        System.out.println(Response.getStatusCode() );
+        return Response;
+    }
+
+
+
+
+
 }

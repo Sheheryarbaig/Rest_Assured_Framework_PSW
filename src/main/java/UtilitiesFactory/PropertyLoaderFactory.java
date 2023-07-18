@@ -61,7 +61,7 @@ public class PropertyLoaderFactory {
         return getProperty(path, filename);
     }
 
-    public JSONObject getRequestFile(String filename) throws Exception {
+    public static JSONObject getRequestFile(String filename) throws Exception {
 
         String path = null;
 
@@ -116,7 +116,7 @@ public class PropertyLoaderFactory {
         return properties;
     }
 
-    public JSONObject getJson(String path, String filename) throws Exception {
+    public static JSONObject getJson(String path, String filename) throws Exception {
         filename = filename + ".json";
         JSONParser parser = new JSONParser();
         JSONObject jsonObject;

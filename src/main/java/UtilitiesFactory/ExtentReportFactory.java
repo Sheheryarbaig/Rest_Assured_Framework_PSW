@@ -3,34 +3,25 @@ package UtilitiesFactory;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.markuputils.Markup;
-import com.aventstack.extentreports.model.Log;
-import com.aventstack.extentreports.model.MediaType;
-import com.aventstack.extentreports.model.Screencast;
-import com.aventstack.extentreports.model.Test;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 
 import java.io.IOException;
 
-import static UtilitiesFactory.EmailReportFactory.failed;
-import static UtilitiesFactory.EmailReportFactory.passed;
-
 public class ExtentReportFactory extends UtilFactory {
 
     String fileName = reportLocation + "extentreport.html";
-
+    String failureException = ""; // Initialize failureException with an empty string
+    int passed = 0; // Initialize passed with 0
+    int failed = 0; // Initialize failed with 0
     public ExtentReportFactory() throws Exception {
     }
 
-
     public void ExtentReport() {
-        //First is to create Extent Reports
+        // First is to create Extent Reports
         extent = new ExtentReports();
 
         ExtentHtmlReporter htmlReporter = new ExtentHtmlReporter(fileName);
-//        ExtentSparkReporter htmlReporter = new ExtentSparkReporter(fileName);
         htmlReporter.config().setTheme(Theme.DARK);
         htmlReporter.config().setDocumentTitle("Krannich Solar Australia: Automation Test Report");
         htmlReporter.config().setEncoding("uft-8");
@@ -43,20 +34,19 @@ public class ExtentReportFactory extends UtilFactory {
         extent.setSystemInfo("Maven", "3.5.2");
         extent.setSystemInfo("Java Version", System.getProperty("java.version"));
         extent.attachReporter(htmlReporter);
-
     }
 
     public void ExtentFailStep() throws IOException {
         failed++;
-        if(deviceName == "API"){
+        if (deviceName.equals("API")) {
             scenarioDef.log(Status.FAIL,
-                      "<summary> <b> <font color=red> Test Failed </b> "
+                    "<summary> <b> <font color=red> Test Failed </b> "
                             + "</font>" + "</summary>");
-        }else {
+        } else {
             scenarioDef.log(Status.FAIL,
                     "<details>" + "<summary> <b> <font color=red> Cause of Failure: </b> "
                             + "</font>" + "</summary>"
-                            + failureException.replaceAll(",", "<br>") + "</details>", MediaEntityBuilder.createScreenCaptureFromBase64String(
+                            + (failureException != null ? failureException.replaceAll(",", "<br>") : "") + "</details>", MediaEntityBuilder.createScreenCaptureFromBase64String(
                             UtilFactory.getBase64Screenshot()).build());
         }
     }
@@ -69,7 +59,7 @@ public class ExtentReportFactory extends UtilFactory {
                 , MediaEntityBuilder.createScreenCaptureFromBase64String(UtilFactory.getBase64Screenshot()).build());
     }
 
-    public void FlushReport(){
+    public void FlushReport() {
         extent.flush();
     }
 }

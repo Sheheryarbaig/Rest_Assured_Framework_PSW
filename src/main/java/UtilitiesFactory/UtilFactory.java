@@ -49,7 +49,7 @@ public class UtilFactory {
     public static String ENumPackage = "EnumFactory.WebShop.";
     private static String screenshotFolder;
     public static String reportLocation;
-    protected static String deviceName;
+    protected static String deviceName= "";
     public static ServiceFactory serviceFactoryInstance = ServiceFactory.getInstance();
     private static ATUTestRecorder recorder;
 
@@ -388,35 +388,47 @@ public class UtilFactory {
         waitFactory.waitForPageToFinishLoading(ServiceFactory.getDriver());
     }
 
-    protected void customWait(int waitTime){
+    protected static void customWait(int waitTime){
         staticWait(waitTime);
     }
 
     public static String getBase64Screenshot() throws IOException {
+        String base64StringOfScreenshot = "";
 
-        String Base64StringofScreenshot="";
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM/dd/");
         DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("__HH_mm_ss");
         LocalDateTime now = LocalDateTime.now();
-        TakesScreenshot ts;
-        if(deviceName.equalsIgnoreCase("ANDROID")){
+        TakesScreenshot ts = null;
+
+        if (deviceName == null || deviceName.isEmpty()) {
+            throw new IllegalArgumentException("Device name is not provided.");
+        }
+
+        if (deviceName.equalsIgnoreCase("ANDROID")) {
             ts = ServiceFactory.getAndroidDriver();
-        }else if (deviceName.equalsIgnoreCase("IOS")){
+        } else if (deviceName.equalsIgnoreCase("IOS")) {
             ts = ServiceFactory.getIOSDriver();
-        }else{
+        } else {
             ts = (TakesScreenshot) ServiceFactory.getDriver();
         }
-        File source = ts.getScreenshotAs(OutputType.FILE);
 
-        String dest = screenshotFolder + "/" +dtf.format(now) + "/" + deviceName + "/" +scenarioName+"/" +dtf2.format(now)+ ".png";
+        if (ts != null) {
+            File source = ts.getScreenshotAs(OutputType.FILE);
 
-        File destination = new File(dest);
-        FileUtils.copyFile(source, destination);
+            String dest = screenshotFolder + "/" + dtf.format(now) + "/" + deviceName + "/" + scenarioName + "/" + dtf2.format(now) + ".png";
+            File destination = new File(dest);
+            FileUtils.copyFile(source, destination);
 
-        byte[] fileContent = FileUtils.readFileToByteArray(source);
-        Base64StringofScreenshot = "data:image/png;base64," + Base64.getEncoder().encodeToString(fileContent);
-        return Base64StringofScreenshot;
+            byte[] fileContent = FileUtils.readFileToByteArray(source);
+            base64StringOfScreenshot = "data:image/png;base64," + Base64.getEncoder().encodeToString(fileContent);
+        } else {
+            System.out.println("Device Name: " + deviceName);
+            throw new IllegalStateException("Screenshot capability is not available for the specified device: " + deviceName);
+        }
+
+        return base64StringOfScreenshot;
     }
+
 
     public static String getVideocreenshot() throws IOException {
 
@@ -804,6 +816,20 @@ public class UtilFactory {
         }
         customWait(200);
     }
+    protected static void pressEnter() {
+        ServiceFactory.getDriver(); // Replace with the appropriate method to get the driver
+        try{
+            customWait(200);
+            Actions actions = new Actions(ServiceFactory.getDriver());
+            actions.sendKeys(Keys.ENTER).perform();
+            scenarioDef.log(Status.PASS,"Pressed Enter");
+        }catch (Exception e){
+            scenarioDef.log(Status.FAIL,"Press Enter is not supported for the current driver");
+            throw e;
+        }
+
+        // Assuming customWait is defined elsewhere
+    }
 
     protected Boolean elementInAscending(List<WebElement> elements){
         Boolean flag = true;
@@ -880,6 +906,7 @@ public class UtilFactory {
 
     public static String locatorXpath(String enumClassName, String locator) throws ClassNotFoundException {
         int i = 0;
+        System.out.println(enumClassName+locator);
         String XPath = null;
         Class cls = Class.forName(ENumPackage+enumClassName);
         for (Object obj : cls.getEnumConstants()) {

@@ -237,6 +237,7 @@ public class ServiceFactory {
     }
 
     public String getBrowser(){
+        BROWSER="Chrome";
         return BROWSER;
     }
 
