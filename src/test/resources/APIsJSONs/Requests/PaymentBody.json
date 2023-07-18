@@ -5,7 +5,7 @@
     "password": "@PSW#1947",
     "psid": "{{PSID}}",
     "transaction_auth_id": "112233",
-    "transaction_amount": "0000000050000",
+    "transaction_amount": "{{amount}}",
     "tran_time": "122330",
     "tran_date": "20210802",
     "bank_mnemonic": "NBP",

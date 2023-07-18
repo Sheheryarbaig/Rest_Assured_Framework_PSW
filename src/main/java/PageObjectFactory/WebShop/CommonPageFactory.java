@@ -40,6 +40,7 @@ public class CommonPageFactory extends UtilFactory {
     static Response POSTResponse;
     static String accessToken;
     static String PSID;
+    static String amount;
     public CommonPageFactory() throws Exception {
     }
 
@@ -244,9 +245,16 @@ public class CommonPageFactory extends UtilFactory {
         try{
             waitFactory.waitForElementToBeClickable(locator);
             Value = getText(locator);
+            System.out.println(locator);
             if(locator.equals("//*[@id=\"sub-fee-slip-subscriptionFees-data\"]/strong"))
             {
                 PSID=Value;
+            }
+            if(locator.equals("/html/body/div/div[3]/div[1]/div/div/div/div/div/div/div/div[1]/div[1]/div[2]/div/div[2]/form/fieldset/div[2]/div[2]/div/div[2]/div[1]/h6/strong"))
+            {
+                amount=Value;
+                System.out.println(amount);
+                amount=convertamount(amount);
             }
 
             scenarioDef.log(Status.PASS,"Clicked on "+getLocatorNameforLog(Locator)+" Field on "+PageName+" Page.",
@@ -258,6 +266,29 @@ public class CommonPageFactory extends UtilFactory {
             throw e;
         }
         return Value;
+    }
+    public static String convertamount(String input) {
+        // Remove "PKR" and spaces from the input
+        String numberString = input.replaceAll("[^0-9]", "");
+
+        // Convert the number string to an integer
+        int number = Integer.parseInt(numberString);
+
+        // Calculate the length of the number string
+        int length = numberString.length();
+
+        // Determine the number of prefix zeros based on the length
+        int prefixZeros = 15 - length-4; // Total length is 15 (2 suffix zeros + 1 for digit + 12 prefix zeros)
+
+        // Create the output string with prefix zeros, number, and suffix zeros
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < prefixZeros; i++) {
+            output.append("0");
+        }
+        output.append(number);
+        output.append("00"); // Add two suffix zeros
+
+        return output.toString();
     }
 
 
@@ -296,6 +327,8 @@ public class CommonPageFactory extends UtilFactory {
 
             // Update the 'psid' value in the 'data' object
             dataObject.put("psid", PSID);
+            dataObject.put("transaction_amount", amount);
+           // dataObject.put("transaction_amount",amount);
         }
 
         Response=
