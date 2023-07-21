@@ -2,12 +2,7 @@ package EnumFactory.WebShop;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import static UtilitiesFactory.UtilFactory.loadJSONFile;
 import static org.testng.AssertJUnit.assertEquals;
 
 public enum GetAPI {

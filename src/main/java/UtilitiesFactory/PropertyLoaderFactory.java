@@ -6,7 +6,12 @@ import org.json.simple.parser.JSONParser;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
+import java.nio.file.Files;
+
 
 public class PropertyLoaderFactory {
 
@@ -131,5 +136,17 @@ public class PropertyLoaderFactory {
             throw e;
         }
         return jsonObject;
+    }
+    public static String convertJsonToFormParameters(JSONObject jsonObject) {
+        StringBuilder formParams = new StringBuilder();
+        for (Object key : jsonObject.keySet()) {
+            String value = jsonObject.get(key).toString();
+            formParams.append(key).append("=").append(value).append("&");
+        }
+        // Remove the trailing "&" character
+        if (formParams.length() > 0) {
+            formParams.deleteCharAt(formParams.length() - 1);
+        }
+        return formParams.toString();
     }
 }

@@ -2,6 +2,7 @@ Feature: Login with WebShop and Dynamics Application
 
   Background:
     Given User Setup Web Browser Session
+   Then Database Setup
 
 #  @WebShopLogin @Sanity
 #  Scenario: User Navigate to WebShop
@@ -11,7 +12,7 @@ Feature: Login with WebShop and Dynamics Application
 #    And User Click on "Accept Cookies" Button on "Web Shop Login" Page
 
   @Dynamics_Login @Regression
-  Scenario: Successfully Logged In to Krannich Dynamics Application
+  Scenario Outline: Subscribe Module
 
     When User Navigates to "Psw Website" URL
     And User Click on "subscribe" Button on "PSW page" Page
@@ -31,11 +32,15 @@ Feature: Login with WebShop and Dynamics Application
     Then User Click on "Generate Voucher" Button on "PSW page" Page
     And Save "payment slip" on "PSW page"
     And Save "subscription fee" on "PSW page"
+    And Save "Application ID" on "PSW page"
     When I send a POST Request to "psw payment endpoint" on "<Base URL>" having request body "Payment Body"
     And I verify the status code "<http_code>"
     Then User Click on "Refresh" Button on "PSW page" Page
     Then User Click on "proceed" Button on "PSW page" Page
+    Then User Click on "Send OTP" Button on "PSW page" Page
+    And Fetch OTP value from Database
+
     Examples:
-      | Endpoint     | http_code  |   Base URL      |   Request Body            |
-      | psw endpoint |   200      |   psw base      |   Token Body              |
+      | Endpoint     | http_code | Base URL | Request Body |
+      | psw endpoint | 200       | psw base | Token Body   |
 

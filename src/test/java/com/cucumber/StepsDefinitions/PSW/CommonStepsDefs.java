@@ -1,10 +1,9 @@
-package com.cucumber.StepsDefinitions.WebShop;
+package com.cucumber.StepsDefinitions.PSW;
 
-import EnumFactory.WebShop.GetAPI;
-import EnumFactory.WebShop.PatchAPI;
-import EnumFactory.WebShop.PostAPI;
-import PageObjectFactory.WebShop.CommonPageFactory;
+import PageObjectFactory.PSW.CommonPageFactory;
 import UtilitiesFactory.*;
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
 import com.cucumber.StepsDefinitions.HarnessVariables;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
@@ -12,33 +11,36 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.json.JSONObject;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.picocontainer.behaviors.Stored;
 
-import javax.sound.midi.Soundbank;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Enumeration;
-
-import java.util.Arrays;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
-import static UtilitiesFactory.UtilFactory.serviceFactoryInstance;
-import static org.testng.AssertJUnit.assertEquals;
+import static PageObjectFactory.PSW.CommonPageFactory.ConnectDatabase;
 
 public class CommonStepsDefs extends HarnessVariables {
 
     CommonPageFactory commonPage;
     String kWebprop;
+    private ExtentReports extentReport;
+    private ExtentTest extentTest;
     String runPropFile = "run.properties";
     String runPropFile1 = "post_request.json";
     public static String OrderID = "";
+    String connectionString = "10.1.4.54";
+    String username = "Munsif.Khan";
+    String password = "Sqa_analyst@3211$";
     public static String paymentid = "";
+    public static String applicationid="";
 
+    public static String loginPassword="Abc@4321";
+    public static String DPPLoginPsw="Abc@4321";
+    public static String Environment = "qa";
+    public static String Result = null;
+    Statement stmt;
     public CommonStepsDefs() throws Exception {
         commonPage = new CommonPageFactory();
     }
@@ -50,15 +52,29 @@ public class CommonStepsDefs extends HarnessVariables {
         waitFactory = new WaitFactory(ServiceFactory.getDriver());
         elementFactory = new ElementFactory(ServiceFactory.getDriver());
     }
+    @Given("Database Setup")
+    public void databaseSetup() throws SQLException {
+        // Load the JDBC driver
+       try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+       stmt = ConnectDatabase(connectionString, username, password);
+
+
+        // You can use the 'stmt' object to execute queries or interact with the database.
+        // For example:
+        // ResultSet rs = stmt.executeQuery("SELECT * FROM your_table_name;");
+        // ... do something with the result set ...
+
+        // Don't forget to close the connection when you are done.
+        //stmt.close();
+    }
 
     @Then("User Navigates to {string} URL")
     public void userNavigatesToURL(String url) throws Exception {
-        // if(url.equals("Krannich Dynamics Application")){
-        //Thread.sleep(160000)
-        //}else if(url.equals("Online Store Transactions")){
-//            Thread.sleep(160000);
-//
-//        }
         url = commonPage.getpropertyName(url);
         url = new PropertyLoaderFactory().getPropertyFile(runPropFile).getProperty(url);
 
@@ -170,10 +186,7 @@ public class CommonStepsDefs extends HarnessVariables {
         commonPage.validateElementOnScreen(locator, screenName);
         String Value = "";
         Value = commonPage.getElementValue(locator, screenName, Value);
-        if (locator.equals("XPATH_SALES_ORDER_ID")) {
-            OrderID = Value;
-            System.out.println("Dynamics Order ID is - " + OrderID);
-        }
+
     }
 
 
@@ -311,28 +324,11 @@ public class CommonStepsDefs extends HarnessVariables {
         String url = new PropertyLoaderFactory().getTestDataPropertyFile("EndPoints.properties").getProperty(endpoint);
         System.out.println("URL" + url);
         if (Objects.equals(endPoint, "psw endpoint")) {
-            commonPage.PSWPOSTRequest(baseUrl+url,bodyRequest);
+            commonPage.PSWTokenRequest(baseUrl+url,bodyRequest);
         }
         else {
             commonPage.POSTRequest(baseUrl + url, bodyRequest);
         }
-    }
-
-
-    @And("I send a POST psw Request to {string} on {string} having request body {string}")
-    public void userSendPOSTPSWRequest(String endPoint , String baseURL , String requestBody) throws Exception {
-
-
-        String baseUrl = commonPage.getpropertyName(baseURL);
-        String bodyRequest = commonPage.removeSpaces(requestBody);
-        System.out.println(bodyRequest);
-        baseUrl = new PropertyLoaderFactory().getPropertyFile(runPropFile).getProperty(baseUrl);
-
-        String endpoint = commonPage.getpropertyName(endPoint);
-        System.out.println(endPoint);
-        String url = new PropertyLoaderFactory().getTestDataPropertyFile("EndPoints.properties").getProperty(endpoint);
-        System.out.println(url);
-        commonPage.PSWPOSTRequest(baseUrl+url,bodyRequest);
     }
     @And("I send a PATCH Request to {string} on {string} having request body {string}")
     public void userSendPATCHRequest(String endPoint , String baseURL , String requestBody) throws Exception {
@@ -362,14 +358,25 @@ public class CommonStepsDefs extends HarnessVariables {
             paymentid = Value;
             System.out.println("Payment ID is - "+paymentid);
         }
-
-
+        if(locator.equals("XPATH_APPLICATION_ID")){
+            applicationid = Value;
+            System.out.println("Application ID is - "+applicationid);
+        }
     }
+    @And("Fetch OTP value from Database")
+    public void GetOTP_From_DB() throws Exception {
+        String SQL = "select Top 1 * from AUTH.dbo.otplog where subscriptionApplicationID = '" + applicationid
+                + "' and channelID = 1 order by createdOn desc";
+        ResultSet rs = stmt.executeQuery(SQL);
 
+        // Iterate through the data in the result set and display it.
+        while (rs.next()) {
+            String data = rs.getString("otpcode");
 
+            AES obj1 = new AES("#PSW-OTP-KEY-123");
+            Result = obj1.soften(data);
+            System.out.println(Result);
 
-
-
-
-
+        }
+    }
     }

@@ -1,35 +1,24 @@
-package PageObjectFactory.WebShop;
+package PageObjectFactory.PSW;
 
-import EnumFactory.WebShop.ProductListing;
 import UtilitiesFactory.PropertyLoaderFactory;
-import UtilitiesFactory.ServiceFactory;
-import EnumFactory.WebShop.Cart;
 import UtilitiesFactory.UtilFactory;
+import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.MediaEntityBuilder;
-import com.aventstack.extentreports.MediaEntityModelProvider;
 import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.model.Screencast;
-import io.restassured.config.EncoderConfig;
-import io.restassured.http.ContentType;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.NoSuchContextException;
-import org.openqa.selenium.NoSuchElementException;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
+import static UtilitiesFactory.PropertyLoaderFactory.convertJsonToFormParameters;
 import static io.restassured.RestAssured.given;
 
 public class CommonPageFactory extends UtilFactory {
@@ -54,6 +43,17 @@ public class CommonPageFactory extends UtilFactory {
         String propertyFileName = fieldProperty.replace(" ",".");
         return propertyFileName;
     }
+        public static ExtentReports extent;
+
+        public static ExtentReports getInstance() {
+            if (extent == null) {
+                ExtentHtmlReporter htmlReporter = new ExtentHtmlReporter("extent-report.html");
+                extent = new ExtentReports();
+                extent.attachReporter(htmlReporter);
+            }
+            return extent;
+        }
+
     public void textEnterField(String textToEnter,String Locator,String ScreenName) throws Exception{
         String locator = UtilFactory.locatorXpath(ScreenName,Locator);
         try{
@@ -250,7 +250,7 @@ public class CommonPageFactory extends UtilFactory {
             {
                 PSID=Value;
             }
-            if(locator.equals("/html/body/div/div[3]/div[1]/div/div/div/div/div/div/div/div[1]/div[1]/div[2]/div/div[2]/form/fieldset/div[2]/div[2]/div/div[2]/div[1]/h6/strong"))
+            if(locator.equals("(//*[@id=\"sub-fee-slip-subscriptionFees-data\"])[2]"))
             {
                 amount=Value;
                 System.out.println(amount);
@@ -343,45 +343,23 @@ public class CommonPageFactory extends UtilFactory {
         System.out.println(Response.getStatusCode() );
         return Response;
     }
-    public static Response PSWPOSTRequest(String APIUrl, String APIBody) throws Exception
+    public static Response PSWTokenRequest(String APIUrl, String APIBody) throws Exception
     {
         System.out.println(APIUrl);
 
+
+
         JSONObject requestBody =  PropertyLoaderFactory.getRequestFile(APIBody);
-        String a=requestBody.toString();
-        System.out.println(requestBody);
-        JSONObject jsonObject = (JSONObject) JSONValue.parse(a);
-
-        Map<String, String> params = new HashMap<>();
-        for (Object key : jsonObject.keySet()) {
-            params.put(key.toString(), jsonObject.get(key).toString());
-        }
-        StringBuilder formData = new StringBuilder();
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (formData.length() > 0) {
-                formData.append("&");
-            }
-            formData.append(entry.getKey()).append("=").append(entry.getValue());
-        }
-        formData= new StringBuilder(formData.toString());
-        RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), String.valueOf(formData));
-        String json = new String(a.getBytes(), StandardCharsets.UTF_8);
-
-        System.out.println(body);
+        String requestbody = convertJsonToFormParameters(requestBody);
         Response=
                 given()
-
                         .contentType("application/x-www-form-urlencoded; charset=utf-8")
-                        .formParam("grant_type", "password")
-                        .formParam("username", "UN-00-0656781")
-                        .formParam("password", "Test@1234")
-                        .formParam("client_id", "psw.client.spa")
+                        .body(requestbody)
                         .when().
                         post(APIUrl);
         String responseBody = Response.getBody().asString();
         accessToken = Response.jsonPath().getString("access_token");
         ResponseBody body1 = Response.getBody();
-
         System.out.println(body1.asString());
         System.out.println(Response.getStatusCode() );
         return Response;
@@ -403,7 +381,19 @@ public class CommonPageFactory extends UtilFactory {
         System.out.println(Response.getStatusCode() );
         return Response;
     }
+    public static Statement ConnectDatabase(String ConnectionString, String username, String Password)
+            throws SQLException {
+        Statement stmt = null;
 
+        String connectionUrl = "jdbc:sqlserver://" + ConnectionString + ";databaseName=AUTH;user=" + username
+                + ";password=" + Password;
+        Connection con = DriverManager.getConnection(connectionUrl);
+        stmt = con.createStatement();
+        if (stmt != null) {
+            System.out.println("Connection Sucessfull");
+        }
+        return stmt;
+    }
 
 
 
