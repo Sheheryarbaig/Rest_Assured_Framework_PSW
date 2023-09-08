@@ -8,6 +8,6 @@ This README would normally document whatever steps are necessary to get your app
 
 ### Prepared By: ###
 
-* Name: Muhammad.
-* Email: muhammad.jamshed@systemsltd.com
-* Ph No: (+92) 31-3787974
+* Name: Sheheryar.
+* Email: sheheryaralibaig@gmail.com
+* Ph No: (+92) 331-2869335
